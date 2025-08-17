@@ -197,7 +197,6 @@ When done, merge `working-branch` back into `main` on GitHub.
 
 * Homepage table (list view of custom objects)
 ![alt text](telegram-cloud-photo-size-2-5265013238242866228-y.jpg)
-
 * Add form (`/update-cobj`)
 ![alt text](telegram-cloud-photo-size-2-5265013238242866230-y.jpg)
 
