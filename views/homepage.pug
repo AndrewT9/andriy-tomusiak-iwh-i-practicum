@@ -1,0 +1,32 @@
+doctype html
+html(lang="uk")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    title= title
+    link(rel="stylesheet", href="/css/style.css")
+  body
+    header
+      h1 List of Custom Objects
+      a.btn(href="/update-cobj") Add to this table
+
+    if !rows || rows.length === 0
+      p.empty No records found. Click "Add to this table" to create the first one.
+    else
+      table
+        thead
+          tr
+            th ID
+            each prop in props
+              th= prop
+        tbody
+          each row in rows
+            tr
+              td= row.id
+              each prop in props
+                td= row.properties && row.properties[prop] ? row.properties[prop] : ''
+
+    footer
+      p
+        | Return to
+        a(href="/") homepage

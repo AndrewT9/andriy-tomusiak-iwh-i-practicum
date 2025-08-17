@@ -1,0 +1,22 @@
+doctype html
+html(lang="uk")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    title= title
+    link(rel="stylesheet", href="/css/style.css")
+  body
+    header
+    h1 Update user object form
+      p
+        a(href="/") Return to the main page
+
+    form(method="post" action="/update-cobj")
+      each prop in props
+        .form-row
+          label(for=prop)= prop
+          if prop === 'bio'
+            textarea(name=prop rows="3" placeholder="Введіть #{prop}")
+          else
+            input(type="text" name=prop placeholder=`Введіть ${prop}`)
+      button.btn(type="submit") Add item
