@@ -1,0 +1,248 @@
+# Integrating With HubSpot I: Foundations — Practicum App
+
+> Node.js + Express + Axios + Pug demo app that creates and lists **HubSpot CRM custom-object** records.
+> Built to satisfy the “Integrating With HubSpot I: Foundations” practicum requirements.
+
+---
+
+## ✨ What this app does
+
+* Renders a **homepage** (`GET /`) that lists your custom-object records in a table.
+* Renders an **add form** (`GET /update-cobj`) generated from env-configured properties.
+* **Creates** a new record in your **custom object** (`POST /update-cobj`) via HubSpot CRM API.
+* Uses **dotenv** to keep your **Private App token out of Git**.
+
+---
+
+## 🧰 Tech stack
+
+* Node.js, Express
+* Axios (HTTP)
+* Pug (templating)
+* dotenv
+* Vanilla CSS
+
+---
+
+## 📁 Project structure
+
+```
+.
+├── public/
+│   └── css/
+│       └── style.css
+├── views/
+│   ├── homepage.pug      # table of records
+│   └── updates.pug       # HTML form to add a record
+├── .gitignore
+├── .env                  # NOT committed (your token etc.)
+├── index.js              # Express app
+├── package.json
+└── README.md
+```
+
+---
+
+## ✅ Practicum checklist
+
+* [x] Node app with **Express**, **Axios**, **Pug**.
+* [x] Three routes:
+
+  * `GET /` – homepage/table
+  * `GET /update-cobj` – renders form
+  * `POST /update-cobj` – creates a CRM record
+* [x] Two Pug templates (`homepage`, `updates`).
+* [x] Uses **Private App** token from `.env` (not committed).
+* [x] **Custom object** created with ≥3 custom properties (one named **“Name”** or similar string field).
+* [x] Associated with **Contacts** object type.
+* [x] ≥3 records created.
+* [x] **README contains link** to the **list view** of the custom object (see section below).
+* [x] Meaningful commit history (branch → work → merge to main).
+
+---
+
+## 🔐 Environment variables (.env)
+
+Create a `.env` file in the project root **(do not commit it)**:
+
+```env
+# Required
+HUBSPOT_PRIVATE_APP_TOKEN=pat-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+HUBSPOT_OBJECT_TYPE=dogs            # your custom object "objectType" (e.g., dogs or 2-1234567)
+
+# Comma-separated **internal names** of properties to show in the UI and send when creating a record
+COBJ_PROPERTIES=dog_type,dog_name,dog_bio,dog_breed,olivia
+
+# Which of the above props are required in the form (by internal name)
+REQUIRED_PROPS=dog_name
+
+# Optional
+PORT=3000
+```
+
+### Where to get these values
+
+* **HUBSPOT\_PRIVATE\_APP\_TOKEN**
+  HubSpot → ⚙️ **Settings** → **Integrations** → **Private Apps** → your app → **Show token**.
+
+* **HUBSPOT\_OBJECT\_TYPE**
+  HubSpot → ⚙️ **Settings** → **Objects** → **Custom Objects** → choose your object → **Actions → Developer info**.
+  Use either:
+
+  * the **object type string** (e.g., `dogs`) **or**
+  * the **object type ID** (format like `2-1234567`).
+    *Use exactly what HubSpot shows under Developer info.*
+
+* **COBJ\_PROPERTIES** (internal names!)
+  HubSpot → ⚙️ **Settings** → **Objects** → *your custom object* → **Properties** → click a property → **Show advanced** → **Internal name** (e.g., `dog_name`, `dog_bio`, `dog_breed`, `olivia`).
+  Put these in a comma-separated list.
+
+> ❗️Common pitfall: The **label** can be “Dog Name”, but the **internal name** must be something like `dog_name`. Your `.env` must use **internal** names only.
+
+---
+
+## 🔗 Link to the custom object list (required by the practicum)
+
+> **Add your link here** (from your **test account**):
+> `https://app.hubspot.com/contacts/<test-account-id>/objects/<custom-object-id>/views/all/list`
+
+How to get it:
+
+1. HubSpot → top nav **Contacts** → pick your **custom object** (plural label).
+   *Or*: ⚙️ **Settings** → **Objects** → your custom object → **View {object} in the data table**.
+2. Copy the URL from your browser and paste it above.
+
+---
+
+## 🚀 Getting started
+
+```bash
+# 1) Clone your fork
+git clone https://github.com/<you>/<first-name>-<last-name>-iwh-i-practicum.git
+cd <first-name>-<last-name>-iwh-i-practicum
+
+# 2) Create a work branch
+git checkout -b working-branch
+
+# 3) Install deps
+npm install
+
+# 4) Add your .env (see above)
+# 5) Run the app
+npm start
+# App will run at http://localhost:3000
+```
+
+Make your first commit:
+
+```bash
+git add .
+git commit -m "First commit to my Integrating With HubSpot I: Foundations practicum repository."
+```
+
+When done, merge `working-branch` back into `main` on GitHub.
+
+---
+
+## 🧭 Routes
+
+* `GET /`
+  Fetches records via HubSpot CRM API
+  `GET /crm/v3/objects/{OBJECT_TYPE}?properties=...&limit=100&archived=false`
+  Renders `views/homepage.pug` → an HTML table with columns for each property in `COBJ_PROPERTIES`.
+
+* `GET /update-cobj`
+  Renders `views/updates.pug`: an HTML form generated from `COBJ_PROPERTIES` (text inputs + textarea for long text). Includes a “Return to the main page” link.
+
+* `POST /update-cobj`
+  Creates a new CRM record:
+  `POST /crm/v3/objects/{OBJECT_TYPE}` with body:
+
+  ```json
+  { "properties": { "<prop1>": "...", "<prop2>": "..." } }
+  ```
+
+  On success redirects back to `/`.
+
+---
+
+## 🧪 Testing
+
+1. Visit `http://localhost:3000/update-cobj`
+2. Fill in the fields (at least those listed in `REQUIRED_PROPS`).
+3. Submit → you’ll be redirected to `/` and see the new row in the table.
+
+---
+
+## 🧩 Notes & Troubleshooting
+
+* **`PROPERTY_DOESNT_EXIST`**
+  Your `.env` lists a property not found on the object.
+  → Double-check the **internal name** in HubSpot (Settings → Objects → *your object* → Properties).
+
+* **`Some required properties were not set`**
+  You didn’t provide fields listed in `REQUIRED_PROPS`.
+  → Fill them in or adjust `REQUIRED_PROPS`.
+
+* **`Unable to infer object type`**
+  `HUBSPOT_OBJECT_TYPE` is wrong.
+  → Use the **exact value** from **Developer info** (`dogs` or `2-1234567`).
+
+* **Do not commit your token**
+  `.env` is ignored by `.gitignore`. Keep it that way.
+
+---
+
+## 📸 Screens
+
+* Homepage table (list view of custom objects)
+![alt text](telegram-cloud-photo-size-2-5265013238242866228-y.jpg)
+
+* Add form (`/update-cobj`)
+![alt text](telegram-cloud-photo-size-2-5265013238242866230-y.jpg)
+
+> You can add screenshots in a `docs/` folder and link them here if you’d like.
+
+---
+
+## 📝 What you need in HubSpot (quick recipe)
+
+1. Create a **test developer account**.
+2. Create a **Private App**:
+   Permissions required:
+
+   * `crm.schemas.custom (read, write)`
+   * `crm.objects.custom (read, write)`
+   * `crm.objects.contacts (read, write)`
+3. Create a **custom object** (e.g., `Dogs`) with at least **three custom properties**.
+   Example internal names: `dog_type`, `dog_name`, `dog_bio`, `dog_breed`, `olivia`
+   One property must be a string called “Name” (label) — its **internal** name can be `dog_name`.
+4. **Associate** the custom object with **Contacts**.
+5. Add **≥3 records**.
+6. Put the **list URL** of the custom object in this README (see section above).
+
+---
+
+## 📚 Helpful docs
+
+* HubSpot CRM v3 Objects API: [https://developers.hubspot.com/docs/api/crm/objects](https://developers.hubspot.com/docs/api/crm/objects)
+* Private Apps & authentication: [https://developers.hubspot.com/docs/api/private-apps](https://developers.hubspot.com/docs/api/private-apps)
+* Custom objects: [https://developers.hubspot.com/docs/api/crm/crm-custom-objects](https://developers.hubspot.com/docs/api/crm/crm-custom-objects)
+* Pug: [https://pugjs.org/api/getting-started.html](https://pugjs.org/api/getting-started.html)
+* Axios: [https://axios-http.com/](https://axios-http.com/)
+
+---
+
+## 📄 License
+
+MIT — do whatever you like, just keep the copyright notice.
+
+---
+
+### Final submission
+
+When everything is working:
+
+1. Merge your **working branch** into **main**.
+2. Ensure this README includes your **custom object list link**.
+3. Submit the **public GitHub repo URL** to HubSpot Academy.
