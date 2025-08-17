@@ -11,12 +11,14 @@ html(lang="en")
       p
         a(href="/") Return to the main page
 
-    form(method="post" action="/update-cobj")
-      each prop in props
-        .form-row
-          label(for=prop)= prop
-          if prop === 'bio'
-            textarea(name=prop rows="3" placeholder="Enter #{prop}")
-          else
-            input(type="text" name=prop placeholder=`Enter ${prop}`)
-      button.btn(type="submit") Add item
+  form(method="post" action="/update-cobj")
+    each prop in props
+      - const labelText = prop.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      .form-row
+        label(for=prop)= labelText
+        if prop === 'dog_bio'
+          textarea(name=prop rows="3" placeholder=`Enter ${labelText}`)
+        else
+          input(type="text" name=prop placeholder=`Enter ${labelText}`)
+    button.btn(type="submit") Add item
+

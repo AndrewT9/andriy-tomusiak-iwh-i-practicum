@@ -18,7 +18,8 @@ html(lang="uk")
           tr
             th ID
             each prop in props
-              th= prop
+              - const labelText = prop.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+              th= labelText
         tbody
           each row in rows
             tr
