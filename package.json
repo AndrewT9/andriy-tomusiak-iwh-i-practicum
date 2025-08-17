@@ -7,6 +7,10 @@
     "start": "node index.js"
   },
   "private": true,
-  "author": "Your Name",
-  "license": "ISC"
-}
+  "author": "Andriy Tomusiak",
+  "license": "ISC","dependencies": {
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "pug": "^3.0.2"
+}}
