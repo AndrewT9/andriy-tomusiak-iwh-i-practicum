@@ -1,0 +1,12 @@
+{
+  "name": "andriy-practicum-private-app",
+  "version": "1.0.0",
+  "description": "Private app for Andriy Practicum",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "private": true,
+  "author": "Your Name",
+  "license": "ISC"
+}
